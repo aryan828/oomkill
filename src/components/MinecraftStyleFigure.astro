@@ -1,0 +1,350 @@
+---
+---
+<div class="minecraft-figure" aria-hidden="true">
+	<div class="figure-label">me irl</div>
+	<div class="stage">
+		<!-- Scene 1: Walk -->
+		<div class="scene scene-walk">
+			<div class="character walk">
+				<div class="block head"></div>
+				<div class="block body"></div>
+				<div class="block leg left"></div>
+				<div class="block leg right"></div>
+				<div class="block arm left"></div>
+				<div class="block arm right"></div>
+			</div>
+		</div>
+		<!-- Scene 2: Work at desk -->
+		<div class="scene scene-desk">
+			<div class="desk">
+				<div class="computer">
+					<div class="monitor">
+						<div class="screen"></div>
+					</div>
+					<div class="keyboard"></div>
+				</div>
+			</div>
+			<div class="character desk-pose">
+				<div class="block head"></div>
+				<div class="block body"></div>
+				<div class="block leg left"></div>
+				<div class="block leg right"></div>
+				<div class="block arm left typing"></div>
+				<div class="block arm right typing"></div>
+			</div>
+		</div>
+		<!-- Scene 3: Phone -->
+		<div class="scene scene-phone">
+			<div class="character phone-pose">
+				<div class="block head"></div>
+				<div class="block body"></div>
+				<div class="block leg left"></div>
+				<div class="block leg right"></div>
+				<div class="block arm left"></div>
+				<div class="block arm right phone-arm">
+					<div class="phone"></div>
+				</div>
+			</div>
+		</div>
+		<!-- Scene 4: Sleep -->
+		<div class="scene scene-sleep">
+			<div class="character sleep-pose">
+				<div class="block head">
+					<div class="eyes closed">— —</div>
+				</div>
+				<div class="block body"></div>
+				<div class="block leg left"></div>
+				<div class="block leg right"></div>
+				<div class="block arm left"></div>
+				<div class="block arm right"></div>
+			</div>
+			<div class="zzz">z z z</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.minecraft-figure {
+		display: inline-flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 2rem 0;
+	}
+	.figure-label {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--color-muted);
+		opacity: 0.8;
+	}
+	.stage {
+		position: relative;
+		width: 140px;
+		height: 70px;
+	}
+	.scene {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		opacity: 0;
+		pointer-events: none;
+	}
+	.scene-walk { animation: show-walk 24s infinite; }
+	.scene-desk { animation: show-desk 24s infinite; }
+	.scene-phone { animation: show-phone 24s infinite; }
+	.scene-sleep { animation: show-sleep 24s infinite; }
+
+	@keyframes show-walk {
+		0%, 23% { opacity: 1; }
+		25%, 100% { opacity: 0; }
+	}
+	@keyframes show-desk {
+		0%, 24% { opacity: 0; }
+		25%, 48% { opacity: 1; }
+		50%, 100% { opacity: 0; }
+	}
+	@keyframes show-phone {
+		0%, 49% { opacity: 0; }
+		50%, 73% { opacity: 1; }
+		75%, 100% { opacity: 0; }
+	}
+	@keyframes show-sleep {
+		0%, 74% { opacity: 0; }
+		75%, 99% { opacity: 1; }
+		100% { opacity: 0; }
+	}
+
+	/* Block base */
+	.block {
+		position: absolute;
+		background: linear-gradient(180deg, #8b7355 0%, #6b5344 100%);
+		border: 2px solid #5c4a3a;
+		box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.15), inset -2px -2px 0 rgba(0, 0, 0, 0.2);
+		border-radius: 2px;
+	}
+	.character {
+		position: relative;
+		width: 32px;
+		height: 48px;
+	}
+
+	/* —— Scene 1: Walk —— */
+	.scene-walk .character {
+		animation: walk-across 5.5s ease-in-out infinite;
+	}
+	.scene-walk .block.head { width: 24px; height: 24px; left: 4px; top: 0; }
+	.scene-walk .block.body { width: 20px; height: 20px; left: 6px; top: 22px; }
+	.scene-walk .block.leg { width: 10px; height: 14px; top: 40px; }
+	.scene-walk .block.leg.left { left: 4px; animation: leg-l 0.35s ease-in-out infinite alternate; }
+	.scene-walk .block.leg.right { left: 18px; animation: leg-r 0.35s ease-in-out infinite alternate; }
+	.scene-walk .block.arm { width: 8px; height: 16px; top: 24px; }
+	.scene-walk .block.arm.left { left: -4px; animation: arm-walk-l 0.35s ease-in-out infinite alternate; }
+	.scene-walk .block.arm.right { right: -4px; left: auto; animation: arm-walk-r 0.35s ease-in-out infinite alternate; }
+	@keyframes walk-across {
+		0% { transform: translateX(0) translateY(0); }
+		10% { transform: translateX(12px) translateY(-2px); }
+		20% { transform: translateX(24px) translateY(0); }
+		30% { transform: translateX(36px) translateY(-2px); }
+		40% { transform: translateX(48px) translateY(0); }
+		50% { transform: translateX(60px) translateY(-2px); }
+		60% { transform: translateX(72px) translateY(0); }
+		70% { transform: translateX(84px) translateY(-2px); }
+		80% { transform: translateX(96px) translateY(0); }
+		90% { transform: translateX(108px) translateY(-2px); }
+		100% { transform: translateX(120px) translateY(0); }
+	}
+	@keyframes leg-l { 0% { transform: rotate(-10deg); } 100% { transform: rotate(6deg); } }
+	@keyframes leg-r { 0% { transform: rotate(6deg); } 100% { transform: rotate(-10deg); } }
+	@keyframes arm-walk-l { 0% { transform: rotate(-18deg); } 100% { transform: rotate(4deg); } }
+	@keyframes arm-walk-r { 0% { transform: rotate(4deg); } 100% { transform: rotate(-18deg); } }
+
+	/* —— Scene 2: Desk —— */
+	.scene-desk {
+		justify-content: center;
+		align-items: flex-end;
+		padding-bottom: 0;
+	}
+	.desk {
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 56px;
+		height: 12px;
+		background: linear-gradient(180deg, #5c4033 0%, #4a3328 100%);
+		border: 2px solid #3d2b22;
+		border-radius: 2px;
+		box-shadow: inset 1px 1px 0 rgba(255,255,255,0.1);
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+	}
+	.computer {
+		position: absolute;
+		bottom: 12px;
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0;
+	}
+	.monitor {
+		width: 28px;
+		height: 18px;
+		background: linear-gradient(180deg, #2d2d30 0%, #1a1a1c 100%);
+		border: 2px solid #3d3d40;
+		border-radius: 2px;
+		box-shadow: inset 0 0 0 1px #252528;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.monitor .screen {
+		width: 20px;
+		height: 12px;
+		background: linear-gradient(180deg, #0e6390 0%, #0a3d5c 50%, #062536 100%);
+		border-radius: 1px;
+		box-shadow: inset 0 0 4px rgba(100, 200, 255, 0.3);
+	}
+	.keyboard {
+		width: 22px;
+		height: 6px;
+		background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+		border: 2px solid #252525;
+		border-radius: 2px;
+		margin-top: 2px;
+	}
+	.scene-desk .character {
+		position: absolute;
+		bottom: 10px;
+		left: 50%;
+		transform: translateX(-50%);
+		animation: type-bob 0.5s ease-in-out infinite alternate;
+	}
+	.scene-desk .block.head { width: 24px; height: 24px; left: 4px; top: 0; }
+	.scene-desk .block.body { width: 20px; height: 20px; left: 6px; top: 22px; }
+	.scene-desk .block.leg { width: 10px; height: 14px; top: 40px; }
+	.scene-desk .block.leg.left { left: 4px; transform: rotate(45deg); transform-origin: top center; }
+	.scene-desk .block.leg.right { left: 18px; transform: rotate(45deg); transform-origin: top center; }
+	.scene-desk .block.arm { width: 8px; height: 14px; top: 26px; }
+	.scene-desk .character { z-index: 1; }
+	.scene-desk .desk { z-index: 0; }
+	.scene-desk .block.arm.left.typing {
+		left: 2px;
+		transform: rotate(70deg);
+		transform-origin: top right;
+		animation: type-key-l 0.2s ease-in-out infinite alternate;
+	}
+	.scene-desk .block.arm.right.typing {
+		right: 2px;
+		left: auto;
+		transform: rotate(-70deg);
+		transform-origin: top left;
+		animation: type-key-r 0.2s ease-in-out infinite alternate 0.1s;
+	}
+	@keyframes type-bob {
+		0% { transform: translateX(-50%) translateY(0); }
+		100% { transform: translateX(-50%) translateY(-1px); }
+	}
+	@keyframes type-key-l {
+		0% { transform: rotate(70deg) translateY(0); }
+		100% { transform: rotate(70deg) translateY(2px); }
+	}
+	@keyframes type-key-r {
+		0% { transform: rotate(-70deg) translateY(0); }
+		100% { transform: rotate(-70deg) translateY(2px); }
+	}
+
+	/* —— Scene 3: Phone —— */
+	.scene-phone .character {
+		animation: scroll-wiggle 1.5s ease-in-out infinite;
+	}
+	.scene-phone .block.head { width: 24px; height: 24px; left: 4px; top: 0; }
+	.scene-phone .block.body { width: 20px; height: 20px; left: 6px; top: 22px; }
+	.scene-phone .block.leg { width: 10px; height: 14px; top: 40px; }
+	.scene-phone .block.leg.left { left: 4px; }
+	.scene-phone .block.leg.right { left: 18px; }
+	.scene-phone .block.arm { width: 8px; height: 16px; top: 24px; }
+	.scene-phone .block.arm.left { left: -4px; transform: rotate(-10deg); }
+	.scene-phone .block.arm.right.phone-arm {
+		right: -8px;
+		left: auto;
+		transform: rotate(-75deg);
+		transform-origin: bottom left;
+		width: 10px;
+		height: 20px;
+	}
+	.phone {
+		position: absolute;
+		left: -4px;
+		top: -14px;
+		width: 12px;
+		height: 18px;
+		background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+		border: 2px solid #333;
+		border-radius: 2px;
+		animation: scroll-glow 2s ease-in-out infinite;
+	}
+	@keyframes scroll-wiggle {
+		0%, 100% { transform: translateY(0); }
+		50% { transform: translateY(-1px); }
+	}
+	@keyframes scroll-glow {
+		0%, 100% { box-shadow: inset 0 0 4px rgba(100, 180, 255, 0.3); }
+		50% { box-shadow: inset 0 0 6px rgba(100, 180, 255, 0.5); }
+	}
+
+	/* —— Scene 4: Sleep —— */
+	.scene-sleep {
+		align-items: center;
+		justify-content: center;
+	}
+	.scene-sleep .character {
+		transform: rotate(-90deg);
+		animation: breathe 2s ease-in-out infinite;
+	}
+	.scene-sleep .block.head {
+		width: 24px;
+		height: 24px;
+		left: 4px;
+		top: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.scene-sleep .eyes {
+		font-size: 8px;
+		letter-spacing: 2px;
+		color: #5c4a3a;
+		font-weight: bold;
+	}
+	.scene-sleep .block.body { width: 20px; height: 20px; left: 6px; top: 22px; }
+	.scene-sleep .block.leg { width: 10px; height: 14px; top: 40px; }
+	.scene-sleep .block.leg.left { left: 4px; }
+	.scene-sleep .block.leg.right { left: 18px; }
+	.scene-sleep .block.arm { width: 8px; height: 16px; top: 24px; }
+	.scene-sleep .block.arm.left { left: -4px; transform: rotate(10deg); }
+	.scene-sleep .block.arm.right { right: -4px; left: auto; transform: rotate(-10deg); }
+	.zzz {
+		position: absolute;
+		top: 50%;
+		left: 60%;
+		transform: translateY(-50%);
+		font-family: var(--font-mono);
+		font-size: 10px;
+		color: var(--color-muted);
+		letter-spacing: 2px;
+		animation: zzz-float 1.5s ease-in-out infinite;
+	}
+	@keyframes breathe {
+		0%, 100% { opacity: 1; transform: rotate(-90deg) scale(1); }
+		50% { opacity: 0.92; transform: rotate(-90deg) scale(1.02); }
+	}
+	@keyframes zzz-float {
+		0%, 100% { opacity: 0.6; transform: translateY(-50%) translateX(0); }
+		50% { opacity: 1; transform: translateY(-55%) translateX(4px); }
+	}
+</style>

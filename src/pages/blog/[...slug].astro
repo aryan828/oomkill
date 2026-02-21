@@ -1,0 +1,49 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts
+		.filter((p) => !p.data.draft)
+		.map((post) => ({
+			params: { slug: post.slug },
+			props: { post },
+		}));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const formattedDate = post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<Layout
+	title={`${post.data.title} — oomkill.dev`}
+	description={post.data.description}
+	canonical={`/blog/${post.slug}`}
+>
+	<article class="space-y-8">
+		<header class="space-y-2">
+			<h1 class="font-display text-3xl font-bold text-foreground tracking-tight md:text-4xl">
+				{post.data.title}
+			</h1>
+			<time class="text-sm text-muted font-mono" datetime={post.data.pubDate.toISOString()}>
+				{formattedDate}
+			</time>
+			{post.data.tags && post.data.tags.length > 0 && (
+				<ul class="flex flex-wrap gap-2 mt-2">
+					{post.data.tags.map((tag: string) => (
+						<li>
+							<span class="text-xs font-mono px-2 py-0.5 rounded bg-surface border border-border text-muted">
+								{tag}
+							</span>
+						</li>
+					))}
+				</ul>
+			)}
+		</header>
+		<div class="prose prose-invert">
+			<Content />
+		</div>
+	</article>
+</Layout>
