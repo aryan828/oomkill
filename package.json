@@ -4,15 +4,30 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "dev:clean": "rm -rf node_modules/.vite && astro dev",
     "dev:network": "astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/rss": "^4.0.15",
-    "@astrojs/tailwind": "^6.0.2",
-    "astro": "^5.17.1",
-    "tailwindcss": "^3.4.19"
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.2",
+    "@fontsource-variable/plus-jakarta-sans": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@tailwindcss/postcss": "^4.3.0",
+    "@tailwindcss/typography": "^0.5.19",
+    "astro": "^6.3.3",
+    "gsap": "^3.15.0",
+    "markdown-it": "^14.1.1",
+    "postcss": "^8.5.14",
+    "sanitize-html": "^2.17.4",
+    "tailwindcss": "^4.3.0",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/sanitize-html": "^2.16.1",
+    "@types/three": "^0.184.1"
   }
 }

@@ -1,8 +1,10 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
+import '@fontsource-variable/plus-jakarta-sans';
+import '@fontsource/jetbrains-mono/400.css';
 import '../styles/global.css';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 
 interface Props {
 	title: string;
@@ -11,12 +13,19 @@ interface Props {
 	ogImage?: string;
 }
 
-const { title, description = 'Tech notes and things I learn. oomkill.dev', canonical, ogImage } = Astro.props;
+const {
+	title,
+	description = 'Personal notes on systems, networking, and experiments I find interesting.',
+	canonical,
+	ogImage,
+} = Astro.props;
+
 const site = 'https://oomkill.dev';
 const canonicalUrl = canonical ? `${site}${canonical}` : `${site}${Astro.url.pathname}`;
 const ogImageUrl = ogImage ? (ogImage.startsWith('http') ? ogImage : `${site}${ogImage}`) : undefined;
 ---
 
+<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
@@ -24,13 +33,10 @@ const ogImageUrl = ogImage ? (ogImage.startsWith('http') ? ogImage : `${site}${o
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
-		<meta name="theme-color" content="#0a0a0b" />
+		<meta name="theme-color" content="#fafafa" />
 		<title>{title}</title>
 		<meta name="description" content={description} />
 		<link rel="canonical" href={canonicalUrl} />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
 		<meta property="og:type" content="website" />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
@@ -39,14 +45,39 @@ const ogImageUrl = ogImage ? (ogImage.startsWith('http') ? ogImage : `${site}${o
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
-		<link rel="alternate" type="application/rss+xml" title="oomkill.dev RSS" href={`${site}/rss.xml`} />
-		<ViewTransitions />
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="oomkill.dev | engineering blog"
+			href={`${site}/rss.xml`}
+		/>
+		<script is:inline>
+			(function () {
+				const stored = localStorage.getItem('theme');
+				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				const theme = stored === 'light' || stored === 'dark' ? stored : prefersDark ? 'dark' : 'light';
+				document.documentElement.classList.toggle('dark', theme === 'dark');
+				const meta = document.querySelector('meta[name="theme-color"]');
+				if (meta) meta.setAttribute('content', theme === 'dark' ? '#0a0a0a' : '#fafafa');
+			})();
+		</script>
+		<script is:inline src="/scripts/theme.js"></script>
+		<ClientRouter />
 	</head>
-	<body class="min-h-screen flex flex-col">
-		<Header />
-		<main class="flex-1 mx-auto w-full max-w-3xl px-6 py-10">
-			<slot />
-		</main>
-		<Footer />
+	<body>
+		<div class="site-wrap">
+			<SiteHeader />
+			<main class="site-main">
+				<div class="page-enter" data-page-enter>
+					<slot />
+				</div>
+			</main>
+			<SiteFooter />
+		</div>
 	</body>
 </html>
+
+<script>
+	import { initSiteMotion } from '../scripts/site-motion';
+	initSiteMotion();
+</script>

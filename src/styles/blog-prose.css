@@ -1,0 +1,226 @@
+/* Article body: single vertical rhythm scale */
+
+.blog-content {
+	--flow: 1.5rem;
+	--flow-section: 2.25rem;
+	--flow-tight: 0.75rem;
+	--leading: 1.7;
+	font-size: 1.0625rem;
+	line-height: var(--leading);
+	letter-spacing: -0.011em;
+	color: var(--text);
+}
+
+/* Block-level flow: one consistent gap between siblings */
+.blog-content > :where(p, ul, ol, blockquote, pre, pre.astro-code, table, figure, hr) {
+	margin-block: 0;
+}
+
+.blog-content > :where(p, ul, ol, blockquote, pre, pre.astro-code, table, figure, hr)
+	+ :where(p, ul, ol, blockquote, pre, pre.astro-code, table, figure, hr) {
+	margin-block-start: var(--flow);
+}
+
+.blog-content > h2,
+.blog-content > h3 {
+	margin-block: 0;
+	font-family: var(--font-sans);
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	color: var(--text);
+}
+
+.blog-content > h2 {
+	margin-block-start: var(--flow-section);
+	font-size: 1.5rem;
+	line-height: 1.35;
+}
+
+.blog-content > h3 {
+	margin-block-start: var(--flow-section);
+	font-size: 1.25rem;
+	line-height: 1.4;
+}
+
+.blog-content > :where(p, ul, ol, blockquote, pre, pre.astro-code, table, figure)
+	+ :where(h2, h3) {
+	margin-block-start: var(--flow-section);
+}
+
+.blog-content > :where(h2, h3) + :where(p, ul, ol, blockquote, figure) {
+	margin-block-start: var(--flow-tight);
+}
+
+.blog-content > :first-child {
+	margin-block-start: 0 !important;
+}
+
+.blog-content p,
+.blog-content li {
+	line-height: var(--leading);
+}
+
+.blog-content a {
+	color: var(--accent);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+	text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.blog-content a:hover {
+	text-decoration-color: var(--accent);
+}
+
+.blog-content strong {
+	font-weight: 600;
+}
+
+.blog-content ul,
+.blog-content ol {
+	padding-inline-start: 1.5rem;
+}
+
+.blog-content li + li {
+	margin-block-start: 0.625rem;
+}
+
+.blog-content li > :first-child {
+	margin-block-start: 0;
+}
+
+.blog-content li > :last-child {
+	margin-block-end: 0;
+}
+
+.blog-content li > p {
+	margin-block: 0;
+}
+
+.blog-content li > p + p {
+	margin-block-start: var(--flow-tight);
+}
+
+.blog-content blockquote {
+	padding: 0.75rem 0 0.75rem 1rem;
+	border-inline-start: 3px solid var(--accent);
+	color: var(--text-muted);
+}
+
+.blog-content blockquote > * {
+	margin-block: 0;
+}
+
+.blog-content blockquote > * + * {
+	margin-block-start: var(--flow-tight);
+}
+
+.blog-content hr {
+	border: none;
+	border-block-start: 1px solid var(--border);
+	margin-block: var(--flow-section) !important;
+}
+
+.blog-content code {
+	font-family: var(--font-mono);
+	font-size: 0.875em;
+	background: var(--code-bg);
+	border-radius: 0.25rem;
+	padding: 0.125em 0.35em;
+}
+
+.blog-content pre,
+.blog-content pre.astro-code {
+	font-family: var(--font-mono);
+	font-size: 0.8125rem;
+	line-height: 1.65;
+	background: var(--code-bg) !important;
+	border: 1px solid var(--border);
+	border-radius: 0.5rem;
+	padding: 1.125rem 1.25rem;
+	overflow-x: auto;
+}
+
+.blog-content > pre,
+.blog-content > pre.astro-code {
+	margin-block: 0;
+}
+
+.blog-content > :where(p, ul, ol, blockquote, table, figure) + :where(pre, pre.astro-code),
+.blog-content > :where(pre, pre.astro-code) + :where(p, ul, ol, blockquote, table, figure) {
+	margin-block-start: var(--flow-section);
+}
+
+.blog-content pre code,
+.blog-content pre.astro-code code {
+	background: none;
+	padding: 0;
+	color: var(--text) !important;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+.blog-content table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.9375rem;
+	line-height: 1.5;
+	border: 1px solid var(--border);
+	border-radius: 0.5rem;
+	overflow: hidden;
+}
+
+.blog-content thead {
+	background: var(--code-bg);
+}
+
+.blog-content th,
+.blog-content td {
+	padding: 0.625rem 0.875rem;
+	text-align: left;
+	border-block-end: 1px solid var(--border);
+	line-height: 1.5;
+}
+
+.blog-content th {
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--text-muted);
+}
+
+.blog-content tbody tr:last-child td {
+	border-block-end: none;
+}
+
+.blog-content figure.diagram {
+	margin-block: 0;
+	margin-inline: auto;
+	width: 100%;
+	max-width: var(--content-width);
+}
+
+.blog-content > figure.diagram + :where(p, ul, ol, blockquote),
+.blog-content > :where(p, ul, ol, blockquote) + figure.diagram {
+	margin-block-start: var(--flow-section);
+}
+
+.blog-content figure.diagram svg {
+	display: block;
+	width: 100%;
+	height: auto;
+	margin-inline: auto;
+	border: 1px solid var(--border);
+	border-radius: 0.625rem;
+	background: var(--bg-elevated);
+	padding: 0.75rem;
+	box-sizing: border-box;
+}
+
+.blog-content figure.diagram figcaption {
+	margin-block-start: var(--flow-tight);
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	color: var(--text-muted);
+	text-align: center;
+	max-width: min(38rem, 100%);
+	margin-inline: auto;
+}
