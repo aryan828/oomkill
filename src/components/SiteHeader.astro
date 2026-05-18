@@ -1,0 +1,25 @@
+---
+import SiteLogo from './SiteLogo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+const path = Astro.url.pathname;
+
+function navActive(href: string): boolean {
+	if (href === '/') return path === '/';
+	return path.startsWith(href);
+}
+---
+
+<header class="site-header">
+	<div class="site-header-inner">
+		<a href="/" class="site-logo" aria-label="oomkill.dev, home">
+			<SiteLogo />
+		</a>
+		<nav class="site-nav" aria-label="Main">
+			<a href="/" data-active={navActive('/')}>Home</a>
+			<a href="/blog" data-active={navActive('/blog')}>Writing</a>
+			<a href="/about" data-active={navActive('/about')}>About</a>
+			<ThemeToggle />
+		</nav>
+	</div>
+</header>

@@ -6,39 +6,45 @@ import { getCollection } from 'astro:content';
 const posts = (await getCollection('blog'))
 	.filter((p) => !p.data.draft)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 5);
+	.slice(0, 8);
 ---
 
-<Layout title="oomkill.dev" description="Tech notes and things I learn. A minimal blog about systems, tooling, and what I'm learning.">
-	<div class="space-y-16">
-		<section class="space-y-4">
-			<h1 class="font-display text-3xl font-bold text-foreground tracking-tight md:text-4xl">
-				oomkill.dev
-			</h1>
-			<p class="text-lg text-muted max-w-xl">
-				I write about what I learn in tech — systems, tooling, and the occasional deep dive. Minimal, practical, and hopefully useful.
-			</p>
-		</section>
+<Layout
+	title="oomkill.dev"
+	description="Notes on systems, networking, and experiments I find interesting."
+>
+	<header class="mb-12">
+		<h1 class="blog-hero-title">Hey, I'm Aryan.</h1>
+		<p class="blog-hero-lead">
+			This is where I write about things I'm learning: systems, networking, Linux, and small experiments
+			that help the ideas stick.
+		</p>
+	</header>
 
-		<section>
-			<h2 class="font-display text-xl font-semibold text-foreground mb-6">Latest posts</h2>
-			<ul class="space-y-4">
-				{posts.map((post) => (
+	<section>
+		<h2 class="section-title">Recent posts</h2>
+		<ul class="post-list">
+			{
+				posts.map((post) => (
 					<li>
 						<PostCard
-							slug={post.slug}
+							slug={post.id}
 							title={post.data.title}
 							description={post.data.description}
 							pubDate={post.data.pubDate}
 						/>
 					</li>
-				))}
-			</ul>
-			{posts.length > 0 && (
-				<p class="mt-6">
-					<a href="/blog" class="text-accent hover:underline font-medium">View all posts →</a>
+				))
+			}
+		</ul>
+		{
+			posts.length > 0 && (
+				<p class="mt-8">
+					<a href="/blog" class="text-sm font-medium text-[var(--accent)] hover:underline">
+						All posts →
+					</a>
 				</p>
-			)}
-		</section>
-	</div>
+			)
+		}
+	</section>
 </Layout>

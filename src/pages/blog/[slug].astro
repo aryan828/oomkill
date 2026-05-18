@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+import '../../styles/blog-prose.css';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts
+		.filter((p) => !p.data.draft)
+		.map((post) => ({
+			params: { slug: post.id },
+			props: { post },
+		}));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+});
+---
+
+<Layout
+	title={`${post.data.title} | oomkill.dev`}
+	description={post.data.description}
+	canonical={`/blog/${post.id}`}
+>
+	<article>
+		<header class="article-header" data-animate>
+			<h1 class="article-title">{post.data.title}</h1>
+			<div class="article-meta">
+				<time datetime={post.data.pubDate.toISOString()}>{formattedDate}</time>
+				{post.data.tags?.map((tag: string) => <span class="tag">{tag}</span>)}
+			</div>
+		</header>
+
+		<div class="blog-content" data-animate>
+			<Content />
+		</div>
+
+		<footer class="mt-12 pt-8 border-t border-[var(--border)]" data-animate>
+			<a href="/blog" class="text-sm font-medium text-[var(--accent)] hover:underline">← All posts</a>
+		</footer>
+	</article>
+</Layout>
