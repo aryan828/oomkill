@@ -78,7 +78,11 @@ For a dashboard that fires twenty parallel requests on page load, or a mobile ap
 
 **HTTP keep-alive** is the first escape hatch. Same TCP connection, multiple requests to the same host. Your browser does this by default. Your reverse proxy probably does too. You usually only notice it when something in the chain disables it, or when idle timeouts fight each other.
 
-**HTTP/2 and HTTP/3** push further: many logical streams share fewer transport connections. Multiplexing is great until you realize your load balancer needs to actually understand the protocol end-to-end, not just pass bytes through and hope.
+**HTTP/2** pushes further: many logical streams multiplex over one TCP connection. The browser can send twenty requests in parallel without opening twenty sockets. The tricky part is that head-of-line blocking moves from the HTTP layer down to TCP — one lost packet stalls all streams until it's retransmitted.
+
+**HTTP/3** swaps TCP for QUIC, which is UDP plus reliability logic built into the protocol. Each stream is independent at the transport layer, so a dropped packet only stalls the one stream it belongs to, not everything else. The tradeoff is that QUIC is a much fatter stack to operate: your LB needs to handle UDP, path MTU discovery behaves differently, and connection migration (when a phone switches from WiFi to LTE mid-session) is a real feature you now have to think about rather than a lucky accident.
+
+Multiplexing is great until you realize your load balancer needs to actually understand the protocol end-to-end, not just pass bytes through and hope. An nginx in TCP proxy mode in front of a gRPC backend over HTTP/2 will give you one connection to each backend pod — your clever connection-level routing disappears.
 
 The trade is always the same: fewer handshakes and less CPU spent on setup, in exchange for **remembering things**. Who's connected. How long they've been idle. What happens when they go away without saying goodbye.
 
@@ -117,6 +121,8 @@ The constraints are real though: text framing, one direction, and some proxies b
 Inside the cluster, multiplexed RPC over long-lived connections is usually the right default. One connection, many in-flight calls, less handshake noise.
 
 The footgun is at the edge. Terminate TLS at an L7 LB that doesn't speak HTTP/2 to the backend correctly, or pin HTTP/1.1 somewhere in the chain, and you'll spend a week reading grpc-go logs that look fine in isolation.
+
+The subtler problem is **backpressure**. With HTTP/1.1 you get implicit backpressure for free — the client can only have one in-flight request per connection, so the server's processing rate naturally limits throughput. With HTTP/2 multiplexing, the client can queue hundreds of streams on one connection. If the server is slow, the client buffers pile up on the sender side. gRPC exposes this through `WINDOW_UPDATE` frames at the stream level, but most client libraries don't surface flow-control errors in a way that's easy to act on. The symptom is usually "memory growing slowly on the client" while server latency looks fine.
 
 ### Database connection pools
 
@@ -192,16 +198,29 @@ Cap concurrent connections, expire idle ones on purpose, and when you're load te
 
 Request/response fails loudly: 502, timeout, retry, done. Long-lived stuff fails sideways.
 
-**Half-open TCP** after a network partition is the classic. One side thinks the connection is fine because it hasn't tried to write yet. The honest fix is usually "send something or use a heartbeat." I learned that the hard way in lab setups.
+**Half-open TCP** after a network partition is the classic. One side thinks the connection is fine because it hasn't tried to write yet. The other side's socket is gone — process restarted, NAT entry expired, firewall rule changed. When the first side finally writes, it gets a `RST`. Until then, both sides are in a locally-consistent but globally-incoherent state.
+
+The mechanism: TCP's `FIN`/`RST` machinery only runs if the other side is reachable and participates in the close. If the host reboots or the network severs without any packets getting through, the socket on the surviving side just… waits. `TCP_KEEPALIVE` is the kernel-level fix — it sends empty probes after idle time and tears down the socket if no `ACK` comes back — but the defaults are wild: `tcp_keepalive_time` is 7200 seconds (two hours) on most Linux kernels. That's how long your app can hold a dead connection open while thinking it's fine.
+
+The honest fix is at the application layer: application-level heartbeats with short intervals (30s–60s), timeouts on reads, and treating "no data for N seconds" as "assume dead, reconnect." Don't rely on the kernel to clean up fast enough.
 
 **Sticky sessions** plus long-lived connections plus Kubernetes rollouts is another favorite. User pinned to pod A. Pod A terminates. Client reconnects, maybe to pod B with empty in-memory state. Works great in staging with one replica.
 
 **Thundering herd on reconnect** after a deploy is the one that punishes you for success. Everyone drops at once, everyone comes back at once, auth service and database see a spike that has nothing to do with steady-state traffic. If reconnect isn't jittered and bounded, you're load testing yourself accidentally.
 
-What I want in a client now is boring on purpose: reconnect with backoff, resync from a known cursor or version, never trust a socket that hasn't proven it's alive recently, and make idempotent resume someone's actual job, not a comment in the README.
+A practical reconnect strategy: exponential backoff (doubling from ~100ms, capped at something like 30s) plus full jitter — pick a random value in `[0, min(cap, base × 2^attempt)]` rather than just adding a fixed jitter to the deterministic backoff. Without full jitter, a cohort that disconnected together will still reconnect together even with per-client noise added on top.
+
+What I want in a client now is boring on purpose: reconnect with full-jitter backoff, resync from a known cursor or version, never trust a socket that hasn't proven it's alive recently, and make idempotent resume someone's actual job, not a comment in the README.
 
 ## What I'd tell past-me
 
-Reuse connections when setup is expensive. That's why keep-alive and pools exist. Match timeouts across client, proxy, and server, or you'll debug ghosts while dashboards stay green. Assume anything that lives longer than a single page view will disconnect at the worst time, and write the client accordingly.
+Reuse connections when setup is expensive — that's why keep-alive and pools exist. Match timeouts across client, proxy, and server or you'll debug ghosts while dashboards stay green. Assume anything that lives longer than a single page view will disconnect at the worst time, and write the client accordingly.
 
-I'm still learning this stuff. Follow-up posts might dig into gRPC through nginx, pool sizing math, or sticky sessions, if I can reproduce the weird parts in a small setup first.
+When debugging a long-lived connection problem, draw the full path before you start reading code. Every hop between client and server has its own timeout, buffer, and opinion about what "idle" means. The bug is usually at a boundary you didn't know existed, not in the code you're looking at.
+
+A few specific numbers worth keeping handy:
+- Linux default `tcp_keepalive_time`: 7200s — way too long for most applications; tune it or use app-level heartbeats.
+- AWS ALB idle timeout: 60s default — if your WebSockets go silent for longer, they'll be silently dropped; set a client ping interval under 55s.
+- Postgres `max_connections` default: 100 — easy to exhaust when you have `replicas × pool_size` connections hammering a small RDS instance.
+
+I'm still learning this stuff. Follow-up posts might dig into gRPC through nginx, pool sizing math, or QUIC connection migration, if I can reproduce the interesting parts in a small setup first.

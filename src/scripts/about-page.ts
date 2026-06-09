@@ -1,22 +1,10 @@
 import gsap from 'gsap';
 
-/** About-only: 3D avatar + chip entrance. Page enter is handled by site-motion. */
+/** About-only: chip entrance animation. Page enter is handled by site-motion. */
 export function initAboutPage(root: HTMLElement): () => void {
 	const cleanups: Array<() => void> = [];
 
-	const avatar = root.querySelector<HTMLElement>('[data-about-avatar]');
-	if (avatar) {
-		let avatarCleanup: (() => void) | undefined;
-		void import('./about-avatar').then(({ initAboutAvatar }) => {
-			void initAboutAvatar(avatar).then((cleanup) => {
-				avatarCleanup = cleanup;
-			});
-		});
-		cleanups.push(() => avatarCleanup?.());
-	}
-
 	const mm = gsap.matchMedia();
-	let ctx: gsap.Context;
 
 	mm.add(
 		{
@@ -26,7 +14,7 @@ export function initAboutPage(root: HTMLElement): () => void {
 		(context) => {
 			const { reduce } = context.conditions as { reduce: boolean };
 
-			ctx = gsap.context(() => {
+			gsap.context(() => {
 				const figureWrap = root.querySelector('.about-hero-figure');
 				const topics = root.querySelector('.about-topics');
 
