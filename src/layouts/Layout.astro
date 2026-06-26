@@ -11,9 +11,12 @@ interface Props {
 	description?: string;
 	canonical?: string;
 	ogImage?: string;
+	ogImageAlt?: string;
 	ogType?: 'website' | 'article';
 	publishedTime?: string;
 	modifiedTime?: string;
+	articleTags?: string[];
+	noindex?: boolean;
 	jsonLd?: Record<string, unknown>;
 }
 
@@ -22,19 +25,35 @@ const {
 	description = 'Personal notes on systems, networking, and experiments I find interesting.',
 	canonical,
 	ogImage,
+	ogImageAlt,
 	ogType = 'website',
 	publishedTime,
 	modifiedTime,
+	articleTags,
+	noindex = false,
 	jsonLd,
 } = Astro.props;
 
 const site = 'https://oomkill.dev';
-const canonicalUrl = canonical ? `${site}${canonical}` : `${site}${Astro.url.pathname}`;
+
+// Canonical URLs are standardized with a trailing slash to match the sitemap
+// and Astro's directory output, avoiding duplicate-URL signals.
+function withTrailingSlash(path: string): string {
+	if (path.endsWith('/')) return path;
+	// Don't append to paths that look like files (e.g. /rss.xml).
+	const last = path.split('/').pop() ?? '';
+	if (last.includes('.')) return path;
+	return `${path}/`;
+}
+
+const canonicalPath = withTrailingSlash(canonical ?? Astro.url.pathname);
+const canonicalUrl = `${site}${canonicalPath}`;
 // Default social card for any page that doesn't supply its own.
 const resolvedOgImage = ogImage ?? '/og/default.png';
 const ogImageUrl = resolvedOgImage.startsWith('http')
 	? resolvedOgImage
 	: `${site}${resolvedOgImage}`;
+const resolvedOgImageAlt = ogImageAlt ?? title;
 ---
 
 <!doctype html>
@@ -48,19 +67,29 @@ const ogImageUrl = resolvedOgImage.startsWith('http')
 		<meta name="theme-color" content="#fafafa" />
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		<meta name="author" content="Aryan Narayan" />
+		{noindex && <meta name="robots" content="noindex, follow" />}
 		<link rel="canonical" href={canonicalUrl} />
 		<meta property="og:type" content={ogType} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:url" content={canonicalUrl} />
 		<meta property="og:image" content={ogImageUrl} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:type" content="image/png" />
+		<meta property="og:image:alt" content={resolvedOgImageAlt} />
 		<meta property="og:site_name" content="oomkill.dev" />
+		<meta property="og:locale" content="en_US" />
 		{publishedTime && <meta property="article:published_time" content={publishedTime} />}
 		{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+		{ogType === 'article' && <meta property="article:author" content="Aryan Narayan" />}
+		{articleTags?.map((tag) => <meta property="article:tag" content={tag} />)}
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content={ogImageUrl} />
+		<meta name="twitter:image:alt" content={resolvedOgImageAlt} />
 		{jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
 		<link
 			rel="alternate"
@@ -68,6 +97,7 @@ const ogImageUrl = resolvedOgImage.startsWith('http')
 			title="oomkill.dev | engineering blog"
 			href={`${site}/rss.xml`}
 		/>
+		<link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
 		<script is:inline>
 			(function () {
 				const stored = localStorage.getItem('theme');
