@@ -203,6 +203,11 @@
 	margin-block-start: var(--flow-section);
 }
 
+.blog-content svg {
+	max-width: 100%;
+	height: auto;
+}
+
 .blog-content figure.diagram svg {
 	display: block;
 	width: 100%;
