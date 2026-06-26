@@ -7,11 +7,37 @@ const posts = (await getCollection('blog'))
 	.filter((p) => !p.data.draft)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.slice(0, 8);
+
+const site = 'https://oomkill.dev';
+
+const person = {
+	'@type': 'Person',
+	name: 'Aryan Narayan',
+	url: `${site}/about/`,
+	sameAs: ['https://github.com/aryan828', 'https://www.linkedin.com/in/aryan-narayan/'],
+};
+
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@graph': [
+		{
+			'@type': 'WebSite',
+			name: 'oomkill.dev',
+			description: 'Notes on systems, networking, Linux, and experiments I find interesting.',
+			url: `${site}/`,
+			inLanguage: 'en-US',
+			author: person,
+			publisher: person,
+		},
+		person,
+	],
+};
 ---
 
 <Layout
 	title="oomkill.dev"
 	description="Notes on systems, networking, and experiments I find interesting."
+	jsonLd={jsonLd}
 >
 	<header class="mb-12">
 		<h1 class="blog-hero-title">Hey, I'm Aryan.</h1>
