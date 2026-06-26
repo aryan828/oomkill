@@ -16,7 +16,8 @@
 	margin-block: 0;
 }
 
-.blog-content > :where(p, ul, ol, blockquote, pre, pre.astro-code, table, figure, hr)
+.blog-content
+	> :where(p, ul, ol, blockquote, pre, pre.astro-code, table, figure, hr)
 	+ :where(p, ul, ol, blockquote, pre, pre.astro-code, table, figure, hr) {
 	margin-block-start: var(--flow);
 }
@@ -42,8 +43,7 @@
 	line-height: 1.4;
 }
 
-.blog-content > :where(p, ul, ol, blockquote, pre, pre.astro-code, table, figure)
-	+ :where(h2, h3) {
+.blog-content > :where(p, ul, ol, blockquote, pre, pre.astro-code, table, figure) + :where(h2, h3) {
 	margin-block-start: var(--flow-section);
 }
 

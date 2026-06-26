@@ -54,7 +54,8 @@ function bindPostRowHoverOnce() {
 		(event) => {
 			const row = (event.target as Element).closest<HTMLElement>('.post-row');
 			if (!row) return;
-			if (!rowX.has(row)) rowX.set(row, gsap.quickTo(row, 'x', { duration: 0.35, ease: 'power2.out' }));
+			if (!rowX.has(row))
+				rowX.set(row, gsap.quickTo(row, 'x', { duration: 0.35, ease: 'power2.out' }));
 			rowX.get(row)!(4);
 		},
 		true,

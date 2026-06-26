@@ -20,6 +20,7 @@ This is a personal engineering blog at **oomkill.dev**, built with **Astro 6** (
 ### Pages & routing
 
 File-based Astro routing under `src/pages/`:
+
 - `/` — home with post list
 - `/blog/[slug]` — individual post pages driven by the content collection
 - `/about` — about page with a CSS-animated SVG avatar
