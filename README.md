@@ -1,60 +1,56 @@
-# Astro Starter Kit: Minimal
+# oomkill.dev
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Personal engineering blog at **[oomkill.dev](https://oomkill.dev)** — notes on systems, networking, Linux, and small experiments.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Built with [Astro](https://astro.build) (static output), [Tailwind CSS v4](https://tailwindcss.com), and TypeScript. Deployed to GitHub Pages.
 
-## 🚀 Project Structure
+## Commands
 
-Inside of your Astro project, you'll see the following folders and files:
+| Command             | Action                                          |
+| :------------------ | :---------------------------------------------- |
+| `npm install`       | Install dependencies                            |
+| `npm run dev`       | Start the dev server at `localhost:4321`        |
+| `npm run dev:clean` | Clear the Vite cache, then start the dev server |
+| `npm run build`     | Build the production site to `./dist/`          |
+| `npm run preview`   | Preview the production build locally            |
+| `npm run check`     | Type-check the project with `astro check`       |
+| `npm run format`    | Format the codebase with Prettier               |
+
+## Project structure
 
 ```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+public/            # static assets (favicon, robots.txt, CNAME, theme script)
+src/
+├── components/    # Astro components (header, footer, cards, avatar, theme toggle)
+├── content/blog/  # blog posts as Markdown, validated by the content collection
+├── layouts/       # the single shared Layout
+├── lib/           # vendored fonts used to generate OG images
+├── pages/         # file-based routes (/, /blog, /blog/[slug], /about, /og, rss, 404)
+├── scripts/       # GSAP view-transition + per-page motion
+└── styles/        # global.css (Tailwind v4 + tokens) and blog-prose.css
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+### Writing a post
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Add a Markdown file to `src/content/blog/`. Frontmatter is validated by
+`src/content.config.ts`:
 
-Any static assets, like images, can be placed in the `public/` directory.
+```yaml
+---
+title: My Post
+description: One-line summary used in listings, meta tags, and the OG card.
+pubDate: 2026-01-01
+updated: 2026-01-15 # optional
+draft: false # optional, defaults to false
+tags: [systems, linux] # optional
+---
+```
 
-## 🧞 Commands
+Each post automatically gets a generated Open Graph image at `/og/<slug>.png`
+(rendered at build time with [satori](https://github.com/vercel/satori) + sharp).
 
-All commands are run from the root of the project, from a terminal:
+## Deployment
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## Deploy to GitHub Pages
-
-1. **Push this repo to GitHub** (e.g. `github.com/yourusername/oomkill`).
-
-2. **Enable Pages**: In the repo go to **Settings → Pages**. Under "Build and deployment", set **Source** to **GitHub Actions**.
-
-3. **Deploy**: Every push to `main` will run the workflow in [.github/workflows/deploy.yml](.github/workflows/deploy.yml): it builds the site and deploys to GitHub Pages.
-
-4. **Custom domain (oomkill.dev)**:
-   - In **Settings → Pages**, set **Custom domain** to `oomkill.dev` and save.
-   - In your DNS provider, add either:
-     - A **CNAME** record: `oomkill.dev` → `yourusername.github.io`, or
-     - **A** records for GitHub’s IPs (see [GitHub’s docs](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site)).
-   - Wait for DNS to propagate; GitHub will then serve the site at https://oomkill.dev.
-
-If you are **not** using a custom domain and the site is at `username.github.io/oomkill`, set `base: '/oomkill/'` in `astro.config.mjs` so links and assets work.
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Every push to `main` triggers `.github/workflows/deploy.yml`, which type-checks,
+builds, and deploys to GitHub Pages. The custom domain is pinned via
+`public/CNAME`; DNS points `oomkill.dev` at GitHub Pages.

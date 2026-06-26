@@ -11,6 +11,10 @@ interface Props {
 	description?: string;
 	canonical?: string;
 	ogImage?: string;
+	ogType?: 'website' | 'article';
+	publishedTime?: string;
+	modifiedTime?: string;
+	jsonLd?: Record<string, unknown>;
 }
 
 const {
@@ -18,11 +22,19 @@ const {
 	description = 'Personal notes on systems, networking, and experiments I find interesting.',
 	canonical,
 	ogImage,
+	ogType = 'website',
+	publishedTime,
+	modifiedTime,
+	jsonLd,
 } = Astro.props;
 
 const site = 'https://oomkill.dev';
 const canonicalUrl = canonical ? `${site}${canonical}` : `${site}${Astro.url.pathname}`;
-const ogImageUrl = ogImage ? (ogImage.startsWith('http') ? ogImage : `${site}${ogImage}`) : undefined;
+// Default social card for any page that doesn't supply its own.
+const resolvedOgImage = ogImage ?? '/og/default.png';
+const ogImageUrl = resolvedOgImage.startsWith('http')
+	? resolvedOgImage
+	: `${site}${resolvedOgImage}`;
 ---
 
 <!doctype html>
@@ -37,14 +49,19 @@ const ogImageUrl = ogImage ? (ogImage.startsWith('http') ? ogImage : `${site}${o
 		<title>{title}</title>
 		<meta name="description" content={description} />
 		<link rel="canonical" href={canonicalUrl} />
-		<meta property="og:type" content="website" />
+		<meta property="og:type" content={ogType} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:url" content={canonicalUrl} />
-		{ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
-		<meta name="twitter:card" content="summary" />
+		<meta property="og:image" content={ogImageUrl} />
+		<meta property="og:site_name" content="oomkill.dev" />
+		{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+		{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImageUrl} />
+		{jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
 		<link
 			rel="alternate"
 			type="application/rss+xml"
@@ -55,7 +72,8 @@ const ogImageUrl = ogImage ? (ogImage.startsWith('http') ? ogImage : `${site}${o
 			(function () {
 				const stored = localStorage.getItem('theme');
 				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-				const theme = stored === 'light' || stored === 'dark' ? stored : prefersDark ? 'dark' : 'light';
+				const theme =
+					stored === 'light' || stored === 'dark' ? stored : prefersDark ? 'dark' : 'light';
 				document.documentElement.classList.toggle('dark', theme === 'dark');
 				const meta = document.querySelector('meta[name="theme-color"]');
 				if (meta) meta.setAttribute('content', theme === 'dark' ? '#0a0a0a' : '#fafafa');
@@ -65,9 +83,10 @@ const ogImageUrl = ogImage ? (ogImage.startsWith('http') ? ogImage : `${site}${o
 		<ClientRouter />
 	</head>
 	<body>
+		<a href="#main" class="skip-link">Skip to content</a>
 		<div class="site-wrap">
 			<SiteHeader />
-			<main class="site-main">
+			<main id="main" class="site-main">
 				<div class="page-enter" data-page-enter>
 					<slot />
 				</div>

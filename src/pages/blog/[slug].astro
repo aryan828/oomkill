@@ -4,34 +4,83 @@ import { getCollection, render } from 'astro:content';
 import '../../styles/blog-prose.css';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts
+	const posts = (await getCollection('blog'))
 		.filter((p) => !p.data.draft)
-		.map((post) => ({
-			params: { slug: post.id },
-			props: { post },
-		}));
+		.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+	return posts.map((post, i) => ({
+		params: { slug: post.id },
+		props: {
+			post,
+			// posts are sorted newest-first
+			newer: i > 0 ? posts[i - 1] : null,
+			older: i < posts.length - 1 ? posts[i + 1] : null,
+		},
+	}));
 }
 
-const { post } = Astro.props;
+const { post, newer, older } = Astro.props;
 const { Content } = await render(post);
-const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
-	year: 'numeric',
-	month: 'long',
-	day: 'numeric',
-});
+
+function formatDate(date: Date): string {
+	return date.toLocaleDateString('en-US', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+	});
+}
+
+const formattedDate = formatDate(post.data.pubDate);
+const formattedUpdated = post.data.updated ? formatDate(post.data.updated) : undefined;
+
+// Rough reading time from the raw markdown body (~200 wpm).
+const wordCount = (post.body ?? '').split(/\s+/).filter(Boolean).length;
+const readingTime = Math.max(1, Math.round(wordCount / 200));
+
+const ogImage = `/og/${post.id}.png`;
+const site = 'https://oomkill.dev';
+const canonical = `/blog/${post.id}`;
+
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'BlogPosting',
+	headline: post.data.title,
+	description: post.data.description,
+	datePublished: post.data.pubDate.toISOString(),
+	...(post.data.updated ? { dateModified: post.data.updated.toISOString() } : {}),
+	author: { '@type': 'Person', name: 'Aryan Narayan' },
+	image: `${site}${ogImage}`,
+	url: `${site}${canonical}`,
+	mainEntityOfPage: { '@type': 'WebPage', '@id': `${site}${canonical}` },
+	...(post.data.tags ? { keywords: post.data.tags.join(', ') } : {}),
+};
 ---
 
 <Layout
 	title={`${post.data.title} | oomkill.dev`}
 	description={post.data.description}
-	canonical={`/blog/${post.id}`}
+	canonical={canonical}
+	ogImage={ogImage}
+	ogType="article"
+	publishedTime={post.data.pubDate.toISOString()}
+	modifiedTime={post.data.updated?.toISOString()}
+	jsonLd={jsonLd}
 >
 	<article>
 		<header class="article-header" data-animate>
 			<h1 class="article-title">{post.data.title}</h1>
 			<div class="article-meta">
 				<time datetime={post.data.pubDate.toISOString()}>{formattedDate}</time>
+				<span class="article-meta-sep">·</span>
+				<span>{readingTime} min read</span>
+				{
+					formattedUpdated && (
+						<>
+							<span class="article-meta-sep">·</span>
+							<span>Updated {formattedUpdated}</span>
+						</>
+					)
+				}
 				{post.data.tags?.map((tag: string) => <span class="tag">{tag}</span>)}
 			</div>
 		</header>
@@ -40,8 +89,30 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
 			<Content />
 		</div>
 
-		<footer class="mt-12 pt-8 border-t border-[var(--border)]" data-animate>
-			<a href="/blog" class="text-sm font-medium text-[var(--accent)] hover:underline">← All posts</a>
+		<footer class="post-footer" data-animate>
+			{
+				(newer || older) && (
+					<nav class="post-nav" aria-label="More posts">
+						{older ? (
+							<a class="post-nav-link post-nav-prev" href={`/blog/${older.id}`}>
+								<span class="post-nav-label">← Older</span>
+								<span class="post-nav-title">{older.data.title}</span>
+							</a>
+						) : (
+							<span />
+						)}
+						{newer ? (
+							<a class="post-nav-link post-nav-next" href={`/blog/${newer.id}`}>
+								<span class="post-nav-label">Newer →</span>
+								<span class="post-nav-title">{newer.data.title}</span>
+							</a>
+						) : (
+							<span />
+						)}
+					</nav>
+				)
+			}
+			<a href="/blog" class="post-footer-all">← All posts</a>
 		</footer>
 	</article>
 </Layout>

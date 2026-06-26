@@ -55,6 +55,28 @@
 }
 
 @layer components {
+	.skip-link {
+		position: fixed;
+		top: 0.75rem;
+		left: 0.75rem;
+		z-index: 100;
+		padding: 0.5rem 0.875rem;
+		border-radius: 0.5rem;
+		background: var(--accent);
+		color: #fff;
+		font-size: 0.875rem;
+		font-weight: 600;
+		text-decoration: none;
+		transform: translateY(-150%);
+		transition: transform 0.15s ease;
+	}
+
+	.skip-link:focus-visible {
+		transform: translateY(0);
+		outline: 2px solid var(--bg);
+		outline-offset: 2px;
+	}
+
 	.site-wrap {
 		display: flex;
 		min-height: 100vh;
@@ -193,7 +215,9 @@
 		color: var(--text-muted);
 		text-decoration: none;
 		border-radius: 0.375rem;
-		transition: color 0.15s, background-color 0.15s;
+		transition:
+			color 0.15s,
+			background-color 0.15s;
 	}
 
 	.site-nav a:hover {
@@ -217,7 +241,9 @@
 		background: transparent;
 		color: var(--text-muted);
 		cursor: pointer;
-		transition: color 0.15s, background-color 0.15s;
+		transition:
+			color 0.15s,
+			background-color 0.15s;
 	}
 
 	.theme-toggle-btn:hover {
@@ -404,6 +430,79 @@
 	.tag::before {
 		content: '#';
 		opacity: 0.5;
+	}
+
+	.article-meta-sep {
+		opacity: 0.5;
+	}
+
+	/* Post footer: prev/next navigation + back link */
+	.post-footer {
+		margin-top: 3rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.post-nav {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+		margin-bottom: 2rem;
+	}
+
+	.post-nav-link {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		padding: 1rem 1.125rem;
+		border: 1px solid var(--border);
+		border-radius: 0.75rem;
+		text-decoration: none;
+		transition:
+			border-color 0.15s ease,
+			background 0.15s ease;
+	}
+
+	.post-nav-link:hover {
+		border-color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 6%, transparent);
+	}
+
+	.post-nav-next {
+		text-align: right;
+	}
+
+	.post-nav-label {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--text-muted);
+	}
+
+	.post-nav-title {
+		font-size: 0.9375rem;
+		font-weight: 600;
+		line-height: 1.35;
+		color: var(--text);
+	}
+
+	.post-footer-all {
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--accent);
+	}
+
+	.post-footer-all:hover {
+		text-decoration: underline;
+	}
+
+	@media (max-width: 560px) {
+		.post-nav {
+			grid-template-columns: 1fr;
+		}
+
+		.post-nav-next {
+			text-align: left;
+		}
 	}
 
 	.page-title {

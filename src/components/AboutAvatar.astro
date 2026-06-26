@@ -6,49 +6,55 @@
 	<svg class="avatar-svg" viewBox="0 0 120 190" xmlns="http://www.w3.org/2000/svg">
 		<!-- Floating plumbob -->
 		<g class="plumbob">
-			<polygon points="60,6 70,16 60,26 50,16" fill="var(--accent)" opacity="0.88"/>
-			<polygon points="60,6 70,16 60,20 50,16" fill="white" opacity="0.28"/>
-			<line x1="60" y1="26" x2="60" y2="33" stroke="var(--accent)" stroke-width="1.5" opacity="0.45"/>
+			<polygon points="60,6 70,16 60,26 50,16" fill="var(--accent)" opacity="0.88"></polygon>
+			<polygon points="60,6 70,16 60,20 50,16" fill="white" opacity="0.28"></polygon>
+			<line x1="60" y1="26" x2="60" y2="33" stroke="var(--accent)" stroke-width="1.5" opacity="0.45"
+			></line>
 		</g>
 
 		<!-- Head -->
-		<rect class="skin" x="40" y="33" width="40" height="37" rx="10"/>
+		<rect class="skin" x="40" y="33" width="40" height="37" rx="10"></rect>
 
 		<!-- Eyes -->
-		<circle cx="51" cy="49" r="4" fill="#1a1a1a"/>
-		<circle cx="69" cy="49" r="4" fill="#1a1a1a"/>
-		<circle cx="52.5" cy="47.5" r="1.5" fill="white"/>
-		<circle cx="70.5" cy="47.5" r="1.5" fill="white"/>
+		<circle cx="51" cy="49" r="4" fill="#1a1a1a"></circle>
+		<circle cx="69" cy="49" r="4" fill="#1a1a1a"></circle>
+		<circle cx="52.5" cy="47.5" r="1.5" fill="white"></circle>
+		<circle cx="70.5" cy="47.5" r="1.5" fill="white"></circle>
 
 		<!-- Smile -->
-		<path d="M51 59 Q60 66 69 59" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+		<path
+			d="M51 59 Q60 66 69 59"
+			stroke="#1a1a1a"
+			stroke-width="2.5"
+			fill="none"
+			stroke-linecap="round"></path>
 
 		<!-- Neck -->
-		<rect class="skin" x="54" y="70" width="12" height="10" rx="3"/>
+		<rect class="skin" x="54" y="70" width="12" height="10" rx="3"></rect>
 
 		<!-- Body (shirt) -->
-		<rect class="shirt" x="27" y="78" width="66" height="50" rx="8"/>
+		<rect class="shirt" x="27" y="78" width="66" height="50" rx="8"></rect>
 
 		<!-- Left arm (static) -->
-		<rect class="skin" x="11" y="80" width="14" height="40" rx="7"/>
-		<circle class="skin" cx="18" cy="123" r="7"/>
+		<rect class="skin" x="11" y="80" width="14" height="40" rx="7"></rect>
+		<circle class="skin" cx="18" cy="123" r="7"></circle>
 
 		<!-- Right arm — transform-origin at shoulder centre (102, 80) -->
 		<g class="wave-arm">
-			<rect class="skin" x="95" y="80" width="14" height="40" rx="7"/>
-			<circle class="skin" cx="102" cy="123" r="7"/>
+			<rect class="skin" x="95" y="80" width="14" height="40" rx="7"></rect>
+			<circle class="skin" cx="102" cy="123" r="7"></circle>
 		</g>
 
 		<!-- Pants -->
-		<rect class="pants" x="32" y="126" width="24" height="44" rx="6"/>
-		<rect class="pants" x="64" y="126" width="24" height="44" rx="6"/>
+		<rect class="pants" x="32" y="126" width="24" height="44" rx="6"></rect>
+		<rect class="pants" x="64" y="126" width="24" height="44" rx="6"></rect>
 
 		<!-- Ground shadow -->
-		<ellipse cx="60" cy="183" rx="30" ry="6" fill="currentColor" opacity="0.07"/>
+		<ellipse cx="60" cy="183" rx="30" ry="6" fill="currentColor" opacity="0.07"></ellipse>
 
 		<!-- Shoes -->
-		<ellipse class="shoes" cx="44" cy="174" rx="17" ry="8"/>
-		<ellipse class="shoes" cx="76" cy="174" rx="17" ry="8"/>
+		<ellipse class="shoes" cx="44" cy="174" rx="17" ry="8"></ellipse>
+		<ellipse class="shoes" cx="76" cy="174" rx="17" ry="8"></ellipse>
 	</svg>
 </div>
 
@@ -71,10 +77,18 @@
 		height: 100%;
 	}
 
-	.skin  { fill: var(--skin); }
-	.shirt { fill: var(--accent); }
-	.pants { fill: var(--pants-fill); }
-	.shoes { fill: var(--shoes-fill); }
+	.skin {
+		fill: var(--skin);
+	}
+	.shirt {
+		fill: var(--accent);
+	}
+	.pants {
+		fill: var(--pants-fill);
+	}
+	.shoes {
+		fill: var(--shoes-fill);
+	}
 
 	.plumbob {
 		animation: plumbob-float 2.4s ease-in-out infinite;
@@ -86,8 +100,13 @@
 	}
 
 	@keyframes plumbob-float {
-		0%, 100% { transform: translateY(0); }
-		50%       { transform: translateY(-5px); }
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-5px);
+		}
 	}
 
 	/*
@@ -96,17 +115,37 @@
 	 * 130deg puts the arm in a natural "hi wave" position.
 	 */
 	@keyframes wave {
-		0%,  100% { transform: rotate(0deg); }
-		20%        { transform: rotate(130deg); }
-		30%        { transform: rotate(110deg); }
-		40%        { transform: rotate(130deg); }
-		50%        { transform: rotate(110deg); }
-		60%        { transform: rotate(130deg); }
-		75%        { transform: rotate(0deg); }
+		0%,
+		100% {
+			transform: rotate(0deg);
+		}
+		20% {
+			transform: rotate(130deg);
+		}
+		30% {
+			transform: rotate(110deg);
+		}
+		40% {
+			transform: rotate(130deg);
+		}
+		50% {
+			transform: rotate(110deg);
+		}
+		60% {
+			transform: rotate(130deg);
+		}
+		75% {
+			transform: rotate(0deg);
+		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.plumbob  { animation: none; }
-		.wave-arm { animation: none; transform: rotate(120deg); }
+		.plumbob {
+			animation: none;
+		}
+		.wave-arm {
+			animation: none;
+			transform: rotate(120deg);
+		}
 	}
 </style>
